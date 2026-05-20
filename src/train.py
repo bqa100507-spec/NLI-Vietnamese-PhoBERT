@@ -7,6 +7,7 @@ transformers.logging.set_verbosity_error()
 import numpy as np
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+import json
 
 from dataset import NLIDataset
 from model import get_model
@@ -78,6 +79,12 @@ else:
 
 print("Starting training ...")
 best_f1 = 0.0
+history = {
+    "train_loss": [],
+    "val_loss": [],
+    "val_acc": [],
+    "val_f1": []
+}
 for epoch in range(EPOCHS):
     model.train()
     train_loss = 0
@@ -150,5 +157,14 @@ for epoch in range(EPOCHS):
                 torch.save(model.state_dict(), "best_model.pth")
                 print("Saved best model with F1: ", best_f1)
 
-print("\nF1 socre of the best model on the validation set is: ", best_f1)
+    history["train_loss"].append(train_loss/len(train_loader))
+    history["val_loss"].append(avg_val_loss)
+    history["val_acc"].append(val_acc)
+    history["val_f1"].append(val_f1)
+
+with open("history.json", "w") as f:
+    json.dump(history, f)
+print("\nTrain history saved to: ", "history.json")
+
+print("\nF1 socre of the best model on the validation set is: ", best_f1) 
 print("\nBest model saved to: ", "best_model.pth")

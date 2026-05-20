@@ -71,7 +71,7 @@ scheduler = get_linear_schedule_with_warmup(
     num_training_steps=num_train_steps
 )
 
-if device == 'gpu':
+if device == 'cuda':
     scaler = torch.cuda.amp.GradScaler()
 else:
     scaler = None
@@ -88,7 +88,7 @@ for epoch in range(EPOCHS):
         attention_mask = batch["attention_mask"].to(device)
         labels = batch["labels"].to(device)
         
-        if device == 'gpu':
+        if device == 'cuda':
             with torch.cuda.amp.autocast():
                 outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
                 loss = outputs.loss
@@ -103,7 +103,7 @@ for epoch in range(EPOCHS):
         train_loss += loss.item() * ACCUMULATION_STEPS
         
         if (step + 1) % ACCUMULATION_STEPS == 0 or (step + 1) == len(train_loader):
-            if device == 'gpu':
+            if device == 'cuda':
                 scaler.unscale_(optimizer)
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
                 scaler.step(optimizer)
@@ -117,7 +117,7 @@ for epoch in range(EPOCHS):
 
     print(f"Epoch {epoch+1}/{EPOCHS}, Train Loss: {train_loss/len(train_loader):.4f}")
 
-    if device == 'gpu':
+    if device == 'cuda':
         model.eval()
         val_preds = []
         val_labels = []

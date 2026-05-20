@@ -13,7 +13,6 @@ from model import get_model
 from dotenv import load_dotenv
 import os
 load_dotenv()
-os.environ["HF_TOKEN"] = os.getenv("HF_TOKEN")
 
 MODEL_NAME = "vinai/phobert-base"
 BATCH_SIZE = 32
@@ -148,8 +147,3 @@ for epoch in range(EPOCHS):
                 best_f1 = val_f1
                 torch.save(model.state_dict(), "best_model.pth")
                 print("Saved best model with F1: ", best_f1)
-
-    
-            
-        
-        

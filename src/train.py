@@ -1,7 +1,9 @@
 import torch
 from torch.utils.data import DataLoader
 import pandas as pd
+import transformers
 from transformers import AutoTokenizer, get_linear_schedule_with_warmup
+transformers.logging.set_verbosity_error()
 import numpy as np
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score

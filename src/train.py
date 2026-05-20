@@ -149,3 +149,6 @@ for epoch in range(EPOCHS):
                 best_f1 = val_f1
                 torch.save(model.state_dict(), "best_model.pth")
                 print("Saved best model with F1: ", best_f1)
+
+print("\nF1 socre of the best model on the validation set is: ", best_f1)
+print("\nBest model saved to: ", "best_model.pth")

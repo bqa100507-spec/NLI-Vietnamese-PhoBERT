@@ -64,7 +64,6 @@ model = get_model(MODEL_NAME, num_labels=len(label_dict))
 model.to(device)
 
 optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE)
-
 num_train_steps = len(train_loader) * EPOCHS // ACCUMULATION_STEPS
 scheduler = get_linear_schedule_with_warmup(
     optimizer,
@@ -73,7 +72,7 @@ scheduler = get_linear_schedule_with_warmup(
 )
 
 if device == 'cuda':
-    scaler = torch.cuda.amp.GradScaler()
+    scaler = torch.amp.GradScaler('cuda')
 else:
     scaler = None
 
@@ -96,7 +95,7 @@ for epoch in range(EPOCHS):
         labels = batch["labels"].to(device)
         
         if device == 'cuda':
-            with torch.cuda.amp.autocast():
+            with torch.amp.autocast('cuda'):
                 outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
                 loss = outputs.loss
             loss = loss / ACCUMULATION_STEPS 
@@ -129,7 +128,7 @@ for epoch in range(EPOCHS):
         val_preds = []
         val_labels = []
         val_loss = 0
-        with torch.no_grad():
+        with torch.inference_mode(): 
             val_progress_bar = tqdm(valid_loader, desc=f"Epoch {epoch+1}/{EPOCHS} - Validating")
             for batch in val_progress_bar:
                 input_ids = batch["input_ids"].to(device)

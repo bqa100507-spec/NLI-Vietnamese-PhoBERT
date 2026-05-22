@@ -34,10 +34,10 @@ df_valid = pd.read_json("hf://datasets/uitnlp/ViANLI/" + splits["validation"], l
 if device == "cpu":
     print("Using CPU for training")
     print("Reducing the size of the training and validation sets")
-    df_train = df_train.head(100)
-    df_valid = df_valid.head(20)
-    BATCH_SIZE = 4
-    EPOCHS = 5 
+    df_train = df_train.head(20)
+    df_valid = df_valid.head(10)
+    BATCH_SIZE = 2
+    EPOCHS = 1
     ACCUMULATION_STEPS = 1
 
 print("train shape:", df_train.shape)
@@ -156,14 +156,16 @@ for epoch in range(EPOCHS):
                 torch.save(model.state_dict(), "best_model.pth")
                 print("Saved best model with F1: ", best_f1)
 
-    history["train_loss"].append(train_loss/len(train_loader))
-    history["val_loss"].append(avg_val_loss)
-    history["val_acc"].append(val_acc)
-    history["val_f1"].append(val_f1)
+    if device == 'cuda':
+        history["train_loss"].append(train_loss/len(train_loader))
+        history["val_loss"].append(avg_val_loss)
+        history["val_acc"].append(val_acc)
+        history["val_f1"].append(val_f1)
 
-with open("history.json", "w") as f:
-    json.dump(history, f)
-print("\nTrain history saved to: ", "history.json")
+    if device == 'cuda':
+        with open("history.json", "w") as f:
+            json.dump(history, f)
+        print("\nTrain history saved to: ", "history.json")
 
 print("\nF1 socre of the best model on the validation set is: ", best_f1) 
 print("\nBest model saved to: ", "best_model.pth")

@@ -37,7 +37,7 @@ if device == "cpu":
     df_train = df_train.head(20)
     df_valid = df_valid.head(10)
     BATCH_SIZE = 2
-    EPOCHS = 1
+    EPOCHS = 1 
     ACCUMULATION_STEPS = 1
 
 print("train shape:", df_train.shape)

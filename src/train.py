@@ -162,10 +162,10 @@ for epoch in range(EPOCHS):
         history["val_acc"].append(val_acc)
         history["val_f1"].append(val_f1)
 
-    if device == 'cuda':
-        with open("history.json", "w") as f:
-            json.dump(history, f)
-        print("\nTrain history saved to: ", "history.json")
+if device == 'cuda':
+    with open("history.json", "w") as f:
+        json.dump(history, f)
+    print("\nTrain history saved to: ", "history.json")
 
 print("\nF1 socre of the best model on the validation set is: ", best_f1) 
 print("\nBest model saved to: ", "best_model.pth")

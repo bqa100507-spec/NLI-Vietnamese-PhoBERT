@@ -49,7 +49,7 @@ train_dataset = NLIDataset(
     tokenizer,
     max_length=MAX_LENGTH
 )
-label_dict = list(train_dataset.label_dict.keys())
+label_dict = np.sort(list(train_dataset.label_dict.keys()))
 valid_dataset = NLIDataset(
     df_valid,
     tokenizer,

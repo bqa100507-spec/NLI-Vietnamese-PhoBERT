@@ -1,5 +1,6 @@
 from torch.utils.data import Dataset
 import torch
+import numpy as np
 
 class NLIDataset(Dataset):
     def __init__(self, dataframe, tokenizer, label_list=None, max_length=128):
@@ -8,7 +9,7 @@ class NLIDataset(Dataset):
         self.max_length = max_length
 
         if label_list is None:
-            self.label_list = dataframe.label.unique()
+            self.label_list = np.sort(dataframe.label.unique())
         else:
             self.label_list = label_list
 

@@ -1,0 +1,10 @@
+torch
+pandas
+transformers
+tqdm
+scikit-learn
+python-dotenv
+matplotlib
+jupyter
+datasets
+numpy

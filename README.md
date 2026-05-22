@@ -22,17 +22,18 @@ Mô hình PhoBERT-base đạt kết quả ban đầu trên tập Validation/Test
 - Accuracy: ~43%
 - Macro F1-score: ~42%
 
-## 🔬 Phân tích Lỗi (Key Findings in Error Analysis)
-Thông qua ma trận nhầm lẫn (Confusion Matrix) và việc lọc các Dự đoán sai có độ tự tin cao (>70%), dự án đã "bắt bệnh" được 3 lỗ hổng suy luận điển hình của mô hình:
+## 🔬 Phân tích Lỗi (Error Analysis)
+Thông qua Confusion Matrix và việc lọc các Dự đoán sai có độ tự tin cao (>70%), dự án đã chỉ ra 3 vấn đề trong suy luận của mô hình:
 
 - **Lỗ hổng Toán học & Thời gian (Numerical/Temporal Blindness)**: Mô hình ngôn ngữ chỉ khớp chuỗi ký tự mà không hiểu logic tính toán (VD: Không hiểu 100g x 10 = 1kg, dẫn đến việc gán nhãn Contradiction một cách sai lệch).
 - **Bẫy chồng chéo từ vựng (Lexical Overlap Trap)**: Khi hai câu lặp lại nhiều từ giống nhau (đặc biệt khi bị đảo cấu trúc Chủ - Vị), mô hình lười suy luận và lập tức gán nhãn Entailment.
 - **Định kiến dán nhãn (Systematic Bias)**: Mô hình có xu hướng "sợ hãi" việc đưa ra quyết định an toàn là Neutral, luôn cố ép các câu trung lập thành Entailment hoặc Contradiction một cách khiên cưỡng.
 
-👉 Chi tiết báo cáo đồ thị học tập, ma trận nhầm lẫn và mổ xẻ dữ liệu: `notebook/errorAnalysis.ipynb`
+👉 Chi tiết báo cáo Learning Curve, Confusion Matrix và đánh giá chuyên sâu dữ liệu: `notebook/errorAnalysis.ipynb`
 
 ## 📂 Cấu trúc dự án (Project Structure)
 ```text
+├── data/                   # Chứa biểu đồ (Loss, Score) và các file phân tích lỗi (CSV)
 ├── model/
 │   ├── best_model.pth      # Trọng số mô hình tốt nhất 
 │   └── history.json        # Lịch sử training (Loss, Accuracy, F1-score)
@@ -58,6 +59,12 @@ cd NLI-Vietnamese-PhoBERT
 Cài đặt các thư viện cần thiết:
 ```bash
 pip install -r requirements.txt
+```
+
+Cấu hình Hugging Face Token:
+Tạo file `.env` ở thư mục gốc của dự án và thêm token Hugging Face của bạn vào để có quyền tải bộ dữ liệu ViANLI:
+```env
+HF_TOKEN=your_huggingface_token
 ```
 
 Khởi chạy quá trình huấn luyện:

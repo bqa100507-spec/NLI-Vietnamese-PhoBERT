@@ -1,6 +1,6 @@
 .env
 __pycache__/
-model/
+model/*
 !model/.gitkeep
 *.json
 *.pt

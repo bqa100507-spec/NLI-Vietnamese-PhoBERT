@@ -97,6 +97,8 @@ history = {
     "val_acc": [],
     "val_f1": []
 }
+early_stopping_patience = 4
+no_improvement_count = 0
 for epoch in range(EPOCHS):
     model.train()
     train_loss = 0
@@ -168,6 +170,12 @@ for epoch in range(EPOCHS):
                 best_f1 = val_f1
                 torch.save(model.state_dict(), model_save_path)
                 print("Saved best model with F1: ", best_f1)
+                no_improvement_count = 0
+            else:
+                no_improvement_count += 1
+                if no_improvement_count >= early_stopping_patience:
+                    print("Early stopping triggered")
+                    break
 
     if device == 'cuda':
         history["train_loss"].append(train_loss/len(train_loader))

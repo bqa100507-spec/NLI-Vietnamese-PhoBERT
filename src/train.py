@@ -35,6 +35,7 @@ LEARNING_RATE = 2e-5
 EPOCHS = 16
 ACCUMULATION_STEPS = 2
 MAX_LENGTH = 128
+FREEZE_LAYERS = 8
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using device: {device}")
@@ -72,7 +73,7 @@ valid_dataset = NLIDataset(
 train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 valid_loader = DataLoader(valid_dataset, batch_size=BATCH_SIZE)
 
-model = get_model(MODEL_NAME, num_labels=len(label_dict))
+model = get_model(MODEL_NAME, num_labels=len(label_dict), freeze_layers=FREEZE_LAYERS)
 model.to(device)
 
 optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=1e-4)

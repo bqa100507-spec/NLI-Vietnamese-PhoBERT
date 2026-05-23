@@ -21,7 +21,8 @@ import argparse
 import os
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--exp_name", type=str, default="baseline", help="Weight-decay_01")
+parser.add_argument("--exp_name", type=str, default="baseline", help="Tên của experiment")
+parser.add_argument("--label_smoothing", type=float, default=0.0, help="Mức độ Label Smoothing")
 args = parser.parse_args()
 
 os.makedirs("model", exist_ok=True)
@@ -81,7 +82,7 @@ scheduler = get_linear_schedule_with_warmup(
     num_warmup_steps=int(num_train_steps * 0.1),
     num_training_steps=num_train_steps
 )
-loss_fn = torch.nn.CrossEntropyLoss(label_smoothing=0.1)
+loss_fn = torch.nn.CrossEntropyLoss(label_smoothing=args.label_smoothing)
 
 if device == 'cuda':
     scaler = torch.amp.GradScaler('cuda')

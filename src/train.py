@@ -17,6 +17,16 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
+import argparse
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--exp_name", type=str, default="baseline", help="Weight-decay_01")
+args = parser.parse_args()
+
+model_save_path = f"models/best_model_{args.exp_name}.pth"
+history_save_path = f"models/history_{args.exp_name}.json"
+
 MODEL_NAME = "vinai/phobert-base"
 BATCH_SIZE = 32
 LEARNING_RATE = 2e-5
@@ -63,7 +73,7 @@ valid_loader = DataLoader(valid_dataset, batch_size=BATCH_SIZE)
 model = get_model(MODEL_NAME, num_labels=len(label_dict))
 model.to(device)
 
-optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE)
+optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=1e-4)
 num_train_steps = len(train_loader) * EPOCHS // ACCUMULATION_STEPS
 scheduler = get_linear_schedule_with_warmup(
     optimizer,
@@ -153,7 +163,7 @@ for epoch in range(EPOCHS):
 
             if val_f1 > best_f1:
                 best_f1 = val_f1
-                torch.save(model.state_dict(), "best_model.pth")
+                torch.save(model.state_dict(), model_save_path)
                 print("Saved best model with F1: ", best_f1)
 
     if device == 'cuda':
@@ -163,9 +173,10 @@ for epoch in range(EPOCHS):
         history["val_f1"].append(val_f1)
 
 if device == 'cuda':
-    with open("history.json", "w") as f:
+    with open(history_save_path, "w") as f:
         json.dump(history, f)
-    print("\nTrain history saved to: ", "history.json")
+    print("\nTrain history saved to: ", history_save_path)
 
 print("\nF1 socre of the best model on the validation set is: ", best_f1) 
-print("\nBest model saved to: ", "best_model.pth")
+print("\nBest model saved to: ", model_save_path)
+print("\nTrain history saved to: ", history_save_path)

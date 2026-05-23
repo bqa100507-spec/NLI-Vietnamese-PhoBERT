@@ -81,6 +81,7 @@ scheduler = get_linear_schedule_with_warmup(
     num_warmup_steps=int(num_train_steps * 0.1),
     num_training_steps=num_train_steps
 )
+loss_fn = torch.nn.CrossEntropyLoss(label_smoothing=0.1)
 
 if device == 'cuda':
     scaler = torch.amp.GradScaler('cuda')
@@ -107,13 +108,13 @@ for epoch in range(EPOCHS):
         
         if device == 'cuda':
             with torch.amp.autocast('cuda'):
-                outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
-                loss = outputs.loss
+                outputs = model(input_ids, attention_mask=attention_mask)
+                loss = loss_fn(outputs.logits, labels)
             loss = loss / ACCUMULATION_STEPS 
             scaler.scale(loss).backward() 
         else:
-            outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
-            loss = outputs.loss
+            outputs = model(input_ids, attention_mask=attention_mask)
+            loss = loss_fn(outputs.logits, labels)
             loss = loss / ACCUMULATION_STEPS
             loss.backward()
 
@@ -146,8 +147,8 @@ for epoch in range(EPOCHS):
                 attention_mask = batch["attention_mask"].to(device)
                 labels = batch["labels"].to(device)
                 
-                outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
-                loss = outputs.loss
+                outputs = model(input_ids, attention_mask=attention_mask)
+                loss = loss_fn(outputs.logits, labels)
                 val_loss += loss.item()
 
                 logits = outputs.logits

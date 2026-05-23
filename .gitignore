@@ -1,4 +1,8 @@
 .env
-*.pth
 __pycache__/
 model/
+!model/.gitkeep
+*.json
+*.pt
+*.pth
+*.bin 

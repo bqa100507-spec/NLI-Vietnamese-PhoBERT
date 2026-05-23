@@ -24,8 +24,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--exp_name", type=str, default="baseline", help="Weight-decay_01")
 args = parser.parse_args()
 
-model_save_path = f"models/best_model_{args.exp_name}.pth"
-history_save_path = f"models/history_{args.exp_name}.json"
+os.makedirs("model", exist_ok=True)
+model_save_path = f"model/best_model_{args.exp_name}.pth"
+history_save_path = f"model/history_{args.exp_name}.json"
 
 MODEL_NAME = "vinai/phobert-base"
 BATCH_SIZE = 32

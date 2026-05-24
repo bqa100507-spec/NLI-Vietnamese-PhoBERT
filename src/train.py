@@ -23,8 +23,8 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument("--exp_name", type=str, default="baseline", help="Tên của experiment")
 parser.add_argument("--label_smoothing", type=float, default=0.0, help="Mức độ Label Smoothing")
-parser.add_argument("--freeze_layers", type=int, default=8, help="Số lớp bị đóng băng")
-parser.add_argument("--dropout", type=float, default=0.1, help="Mức độdropout")
+parser.add_argument("--freeze_layers", type=int, default=6, help="Số lớp bị đóng băng")
+parser.add_argument("--dropout", type=float, default=0.2, help="Mức độdropout")
 args = parser.parse_args()
 
 os.makedirs("model", exist_ok=True)

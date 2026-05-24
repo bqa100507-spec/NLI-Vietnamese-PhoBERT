@@ -1,13 +1,20 @@
-from transformers import AutoModelForSequenceClassification
+from transformers import AutoModelForSequenceClassification, AutoConfig
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-def get_model(model, num_labels=3, freeze_layers=8):
+def get_model(model, num_labels=3, freeze_layers=8, dropout=0.1):
+    config = AutoConfig.from_pretrained(
+        model, 
+        hidden_dropout_prob=dropout,
+        attention_probs_dropout_prob=dropout
+    )
+
     model = AutoModelForSequenceClassification.from_pretrained(
         model,
-        num_labels = num_labels
+        num_labels = num_labels,
+        config = config
     )
     for name, param in model.named_parameters():
         if "roberta.encoder.layer." in name:

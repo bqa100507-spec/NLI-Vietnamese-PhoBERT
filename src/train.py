@@ -23,6 +23,8 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument("--exp_name", type=str, default="baseline", help="Tên của experiment")
 parser.add_argument("--label_smoothing", type=float, default=0.0, help="Mức độ Label Smoothing")
+parser.add_argument("--freeze_layers", type=int, default=8, help="Số lớp bị đóng băng")
+parser.add_argument("--dropout", type=float, default=0.1, help="Mức độdropout")
 args = parser.parse_args()
 
 os.makedirs("model", exist_ok=True)
@@ -35,7 +37,8 @@ LEARNING_RATE = 2e-5
 EPOCHS = 16
 ACCUMULATION_STEPS = 2
 MAX_LENGTH = 128
-FREEZE_LAYERS = 8
+FREEZE_LAYERS = args.freeze_layers
+DROPOUT = args.dropout
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using device: {device}")
@@ -73,7 +76,7 @@ valid_dataset = NLIDataset(
 train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 valid_loader = DataLoader(valid_dataset, batch_size=BATCH_SIZE)
 
-model = get_model(MODEL_NAME, num_labels=len(label_dict), freeze_layers=FREEZE_LAYERS)
+model = get_model(MODEL_NAME, num_labels=len(label_dict), freeze_layers=FREEZE_LAYERS, dropout=DROPOUT)
 model.to(device)
 
 optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=1e-4)
